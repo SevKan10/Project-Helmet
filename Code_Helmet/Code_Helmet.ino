@@ -1,6 +1,10 @@
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 MPU6050 mpu6050(Wire);
+#include <Wire.h>
+#include <GOFi2cOLED.h>
+GOFi2cOLED oled;
+int Brightness = 0;
 #include <TinyGPS++.h>          
 #include <SoftwareSerial.h>   
 TinyGPSPlus gps;
