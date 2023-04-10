@@ -60,7 +60,7 @@ void loop()
   }
     // Nếu xe chạy trên 40km/h thì đèn vàng sẽ sáng
   }
-
+//*************************************************
     // XỬ LÝ DỮ LIỆU MPU6050
      mpu6050.update();
      float x= mpu6050.getAccX();
@@ -78,4 +78,5 @@ void loop()
       digitalWrite(redled,1);
      }
     // Nếu y có giá trị trên 90 thì xe ngã khi đó đèn đỏ sáng 
+//**************************************************
  }
