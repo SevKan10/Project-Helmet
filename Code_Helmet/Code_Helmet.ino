@@ -77,4 +77,5 @@ void loop()
       Serial.println("xe bi nga ");
       digitalWrite(redled,1);
      }
+    // Nếu y có giá trị trên 90 thì xe ngã khi đó đèn đỏ sáng 
  }
