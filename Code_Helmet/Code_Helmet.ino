@@ -7,8 +7,8 @@ TinyGPSPlus gps;
 #define S_RX    8                
 #define S_TX    9      
 SoftwareSerial SoftSerial(S_RX, S_TX);
-int yellowled = 13;
-int redled = 12;
+boolean yellowled = 13;
+boolean redled = 12;
 // Lấy đèn để mô phỏng cho mp3
 void setup()
  
