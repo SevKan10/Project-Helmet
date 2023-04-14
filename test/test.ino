@@ -1,40 +1,34 @@
 #include <MPU6050_tockn.h>
 #include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27,16,2);
 MPU6050 mpu6050(Wire);
-#include <Wire.h>
-#include <GOFi2cOLED.h>
-GOFi2cOLED oled;
-int Brightness = 0;
 #include <TinyGPS++.h>          
 #include <SoftwareSerial.h>   
 TinyGPSPlus gps;
 #define S_RX    8                
 #define S_TX    9      
 SoftwareSerial SoftSerial(S_RX, S_TX);
-boolean yellowled = 13;
-boolean redled = 12;
-boolean greenled = 11;
+int yellowled = 13; // for speed
+int redled = 12; // for mpu
 void setup()
  
  {
    Serial.begin(9600);
-   SoftSerial.begin(9600); 
-   Wire.begin();
+   lcd.init();
+   lcd.backlight();
    mpu6050.begin();
    mpu6050.calcGyroOffsets(true);
-   pinMode(yellowled,OUTPUT);
-   pinMode(redled,OUTPUT);
-   pinMode(greenled,OUTPUT);
-   yellowled = 0;
-   redled = 0;
-   greenled = 0;
+  SoftSerial.begin(9600); 
+  pinMode(yellowled,OUTPUT);
+  pinMode(redled,OUTPUT);
+
  }
 
 void loop()
 
  {
-   // XỬ LÝ DỮ LIỆU CẢM BIẾN GPS
-   boolean newData = false;
+  boolean newData = false;
   for (unsigned long start = millis(); millis() - start < 300;)
   {
     while (SoftSerial.available() > 0)
@@ -45,28 +39,39 @@ void loop()
       }
     }
   }
-  // Tính vận tốc
+ 
+  //If newData is true
   if (newData == true)
   {
     newData = false; 
     (gps.location.isValid() == 1);
     {
-      Serial.print("Speed: ");
-      Serial.print(gps.speed.kmph());
-      Serial.println("Km/h"); 
-      // In ra tốc độ 
-      Serial.print("Sattlites: ");
+      //String gps_speed = String(gps.speed.kmph());
+      lcd.setCursor(0, 0);
+      lcd.print(gps.speed.kmph());
+      delay(100);
+      Serial.print("Speed ");
+      Serial.println(gps.speed.kmph());
+      lcd.print(" km/h");
+ 
+      lcd.setCursor(0, 1);
+      lcd.print(gps.satellites.value());
+      lcd.print(" SAT");
+      delay(100);
+      Serial.print("Sat ");
       Serial.println(gps.satellites.value());
-      // In ra số vệ tinh
      
     }
-  if (gps.speed.kmph()>40) 
-  {
+    if (gps.speed.kmph()>=11)
+    {
       digitalWrite(yellowled,1);
+    }
+    else
+     digitalWrite(yellowled,0);
   }
-    // Nếu xe chạy trên 40km/h thì đèn vàng sẽ sáng
-  }
-   while (SoftSerial.available() > 0) 
+
+    // XỬ LÝ DỮ LIỆU MPU6050 VÀ VỊ TRÍ GPS
+     while (SoftSerial.available() > 0) 
   {
     if (gps.encode(SoftSerial.read())) 
     {
@@ -81,37 +86,37 @@ void loop()
        {
        Serial.println("Location Invalid");
        }
-      if (gps.satellites.isValid()) 
-      {
+      if (gps.satellites.isValid()) {
         Serial.print("Satellites = ");
         Serial.println(gps.satellites.value());
       }
       else
         Serial.println("Satellites Invalid");
-    } 
-  }
-    
+      }  
+      }
 
-    // XỬ LÝ DỮ LIỆU MPU6050
      mpu6050.update();
-     float x= mpu6050.getAccX();
      float y = mpu6050.getAccY();
-     float z = mpu6050.getAccZ();
      Serial.println("Value MPU6056");
-     Serial.print("x: "); Serial.print(x);
-     Serial.print("\ty: "); Serial.print(y);
-     Serial.print("\tz: "); Serial.println(z);
-     delay(200);
+     Serial.print("\ty: "); Serial.println(y);
+     delay(10);
      // Lấy giá trị y để xác định
-    if (y>0.90)
+    if (y>=0.90 or y<=-0.90)
      {
-         String url = "http://maps.google.com/maps?q=loc:";
-      url = url + String(gps.location.lat(), DEC) + "," + String(gps.location.lng(), DEC);
-    
+      String url = "http://maps.google.com/maps?q=loc:";
+      url = url + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
+      digitalWrite(redled,1);
       Serial.println(url);
       Serial.println("xe bi nga ");
-      digitalWrite(redled,1);
+      lcd.setCursor(0,0);
+      lcd.print(url);
+      lcd.clear();
+      delay(500);
+     }
+     else 
+     {
+          digitalWrite(redled,0);
      }
     // Nếu y có giá trị trên 90 thì xe ngã khi đó đèn đỏ sáng 
 //**************************************************
- }
+  }
