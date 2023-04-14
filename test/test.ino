@@ -26,82 +26,19 @@ void setup()
  }
 
 void loop()
-
- {
-  boolean newData = false;
-  for (unsigned long start = millis(); millis() - start < 300;)
+{
+ gps()
   {
-    while (SoftSerial.available() > 0)
-    {
-      if (gps.encode(SoftSerial.read()))
-      {
-        newData = true;
-      }
-    }
-  }
- 
-  //If newData is true
-  if (newData == true)
-  {
-    newData = false; 
-    (gps.location.isValid() == 1);
-    {
-      //String gps_speed = String(gps.speed.kmph());
-      lcd.setCursor(0, 0);
-      lcd.print(gps.speed.kmph());
-      delay(100);
-      Serial.print("Speed ");
-      Serial.println(gps.speed.kmph());
-      lcd.print(" km/h");
- 
-      lcd.setCursor(0, 1);
-      lcd.print(gps.satellites.value());
-      lcd.print(" SAT");
-      delay(100);
-      Serial.print("Sat ");
-      Serial.println(gps.satellites.value());
-     
-    }
     if (gps.speed.kmph()>=11)
     {
       digitalWrite(yellowled,1);
     }
     else
-     digitalWrite(yellowled,0);
+      digitalWrite(yellowled,0);
   }
-
-    // XỬ LÝ DỮ LIỆU MPU6050 VÀ VỊ TRÍ GPS
-     while (SoftSerial.available() > 0) 
+   mpu()
   {
-    if (gps.encode(SoftSerial.read())) 
-    {
-      if (gps.location.isValid()) 
-      {
-        Serial.print("Latitude   = ");
-        Serial.println(gps.location.lat(), 6);
-        Serial.print("Longitude  = ");
-        Serial.println(gps.location.lng(), 6);
-      }
-       else
-       {
-       Serial.println("Location Invalid");
-       }
-      if (gps.satellites.isValid()) {
-        Serial.print("Satellites = ");
-        Serial.println(gps.satellites.value());
-      }
-      else
-        Serial.println("Satellites Invalid");
-      }  
-      }
-
-     mpu6050.update();
-     float y = mpu6050.getAccY();
-     Serial.println("Value MPU6056");
-     Serial.print("\ty: "); Serial.println(y);
-     delay(10);
-     // Lấy giá trị y để xác định
-    if (y>=0.90 or y<=-0.90)
+     if (y>=0.90 or y<=-0.90)
      {
       String url = "http://maps.google.com/maps?q=loc:";
       url = url + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
@@ -117,6 +54,6 @@ void loop()
      {
           digitalWrite(redled,0);
      }
-    // Nếu y có giá trị trên 90 thì xe ngã khi đó đèn đỏ sáng 
-//**************************************************
   }
+}
+
