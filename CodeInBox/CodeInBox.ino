@@ -11,11 +11,9 @@ TinyGPSPlus gps;
 SoftwareSerial SoftSerial(S_RX, S_TX);
 int yellowled = 13;  // for speed
 int redled = 12;     // for mpu
-int relay = 8;
-volatile byte relayState = LOW;
-long lastDebounceTime = 0;  
-long debounceDelay = 10000;
-
+int relayPin = 8; // relay
+int buttonPin = 2; //button
+int whistlePin = 11; //còi
 void setup()
 
 {
@@ -27,12 +25,9 @@ void setup()
   SoftSerial.begin(9600);
   pinMode(yellowled, OUTPUT);
   pinMode(redled, OUTPUT);
-  pinMode(relay, OUTPUT);
-  digitalWrite(relay, HIGH);
-  pinMode(PIRInterrupt, INPUT);
-  attachInterrupt(digitalPinToInterrupt(PIRInterrupt), detectMotion, RISING);
-}
-
+  pinMode(relayPin, OUTPUT); 
+  pinMode(buttonPin, INPUT);
+  pinMode(whistlePin, INPUT);
 void loop() {
   getGps();
 
@@ -44,4 +39,6 @@ void loop() {
   mpu();
   RfinBox();
   RelayinBox();
+  Whistle();
+  button();
 }

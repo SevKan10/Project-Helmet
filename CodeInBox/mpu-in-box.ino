@@ -25,7 +25,7 @@ void mpu() {
   Serial.println(y);
   delay(10);
   // Lấy giá trị y để xác định
-if (y >= 0.90 or y <= -0.90) {
+if (y >= 0.70 or y <= -0.70) {
   String url = "http://maps.google.com/maps?q=loc:";
   url = url + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
   digitalWrite(redled, 1);
