@@ -1,5 +1,3 @@
-#include <ESP8266wifi.h>
-
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -30,18 +28,17 @@ void setup()
   pinMode(relayPin, OUTPUT); 
   pinMode(buttonPin, INPUT);
   pinMode(whistlePin, INPUT);
-}
-void loop() 
-{
-  gpsHel();
+void loop() {
+  getGps();
 
-  if (gps.speed.kmph() > 40) {
+  if (gps.speed.kmph() >= 11) {
     digitalWrite(yellowled, 1);
   } else
     digitalWrite(yellowled, 0);
 
-  mpuHel();
-  mp3Hel();
-  rfHel();
+  mpu();
+  RfinBox();
+  RelayinBox();
+  Whistle();
+  button();
 }
-

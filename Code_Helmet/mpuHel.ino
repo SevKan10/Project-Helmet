@@ -1,4 +1,4 @@
-void mpu() {
+void mpuHel() {
   // XỬ LÝ DỮ LIỆU MPU6050 VÀ VỊ TRÍ GPS
   while (SoftSerial.available() > 0) {
     if (gps.encode(SoftSerial.read())) {
@@ -35,11 +35,7 @@ if (y >= 0.70 or y <= -0.70) {
   lcd.print(url);
   lcd.clear();
   delay(500);
-  digitalWrite(whistlePin,1);
 } else {
   digitalWrite(redled, 0);
-  digitalWrite(whistlePin,0);
 }
 }
-
-   

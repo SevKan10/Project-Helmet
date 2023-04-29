@@ -1,4 +1,4 @@
-void RelayBox()
+void RelayinBox()
 {
     digitalWrite(relayPin, HIGH); // turn on relay.
   delay(1000); // wait for a second.

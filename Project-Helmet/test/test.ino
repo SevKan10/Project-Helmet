@@ -1,5 +1,3 @@
-#include <ESP8266wifi.h>
-
 #include <MPU6050_tockn.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -13,9 +11,6 @@ TinyGPSPlus gps;
 SoftwareSerial SoftSerial(S_RX, S_TX);
 int yellowled = 13;  // for speed
 int redled = 12;     // for mpu
-int relayPin = 8; // relay
-int buttonPin = 2; //button
-int whistlePin = 11; //còi
 void setup()
 
 {
@@ -27,21 +22,15 @@ void setup()
   SoftSerial.begin(9600);
   pinMode(yellowled, OUTPUT);
   pinMode(redled, OUTPUT);
-  pinMode(relayPin, OUTPUT); 
-  pinMode(buttonPin, INPUT);
-  pinMode(whistlePin, INPUT);
 }
-void loop() 
-{
-  gpsHel();
 
-  if (gps.speed.kmph() > 40) {
+void loop() {
+  getGps();
+
+  if (gps.speed.kmph() >= 11) {
     digitalWrite(yellowled, 1);
   } else
     digitalWrite(yellowled, 0);
 
-  mpuHel();
-  mp3Hel();
-  rfHel();
+  mpu();
 }
-
