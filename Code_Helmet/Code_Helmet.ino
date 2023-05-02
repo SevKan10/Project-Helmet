@@ -18,6 +18,8 @@ SoftwareSerial SoftSerial(S_RX, S_TX);
 #include <RF24.h>
 RF24 radio(9, 10); // CE, CSN
 const byte diachi[][6] = {"01234", "56789"}; 
+//--------------------------------- màn oled
+
 // --------------------------------- khai báo
 int yellowled = 13;  // for speed
 int redled = 12;     // for mpu
