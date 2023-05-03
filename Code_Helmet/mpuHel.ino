@@ -11,19 +11,7 @@ void mpuHel() {
         Serial.print("Longitude  = ");
         Serial.println(gps.location.lng(), 6);
       } 
-      else 
-      {
-        Serial.println("Location Invalid");
-      }
-      if (gps.satellites.isValid()) 
-      {
-        Serial.print("Satellites = ");
-        Serial.println(gps.satellites.value());
-      } 
-      else
-      {
-        Serial.println("Satellites Invalid");
-      }  
+
     }
   }
 
