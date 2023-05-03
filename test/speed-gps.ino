@@ -1,4 +1,4 @@
-void getGps() {
+void getGps(void) {
   boolean newData = false;
   for (unsigned long start = millis(); millis() - start < 300;) {
     while (SoftSerial.available() > 0) {
@@ -13,7 +13,6 @@ void getGps() {
     newData = false;
     (gps.location.isValid() == 1);
     {
-      //String gps_speed = String(gps.speed.kmph());
       lcd.setCursor(0, 0);
       lcd.print(gps.speed.kmph());
       delay(100);

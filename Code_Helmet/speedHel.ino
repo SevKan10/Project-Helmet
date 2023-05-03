@@ -1,4 +1,4 @@
-void gpsHel() 
+void gpsHel(void) 
 {
   boolean newData = false;
   for (unsigned long start = millis(); millis() - start < 300;) {

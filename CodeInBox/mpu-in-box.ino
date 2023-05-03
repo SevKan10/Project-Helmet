@@ -25,7 +25,8 @@ void mpu() {
   Serial.println(y);
   delay(10);
   // Lấy giá trị y để xác định
-if (y >= 0.70 or y <= -0.70) {
+if (y >= 0.70 or y <= -0.70)
+ {
   String url = "http://maps.google.com/maps?q=loc:";
   url = url + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
   digitalWrite(redled, 1);
@@ -37,7 +38,18 @@ if (y >= 0.70 or y <= -0.70) {
   delay(500);
   digitalWrite(whistlePin,1);
   // digitalWrite(relay,1); test relay
-} else {
+
+    mySim.println("AT+CMGF=1");   // text mode on
+  delay(1000);                      
+  mySim.println("AT+CMGS=\"+84\"\r"); 
+  delay(1000);
+  mySim.println(url);
+  delay(100);
+  mySim.println((char)26);
+  delay(1000);
+}
+else 
+{
   digitalWrite(redled, 0);
   digitalWrite(whistlePin,0);
   // digitalWrite(relay,0); test relay

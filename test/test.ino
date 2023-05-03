@@ -27,10 +27,10 @@ void setup()
 void loop() {
   getGps();
 
-  if (gps.speed.kmph() >= 11) {
+  if (gps.speed.kmph() >40) {
     digitalWrite(yellowled, 1);
   } else
     digitalWrite(yellowled, 0);
 
-  mpu();
+ // mpu();
 }

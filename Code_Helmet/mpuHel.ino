@@ -1,20 +1,29 @@
 void mpuHel() {
   // XỬ LÝ DỮ LIỆU MPU6050 VÀ VỊ TRÍ GPS
-  while (SoftSerial.available() > 0) {
-    if (gps.encode(SoftSerial.read())) {
-      if (gps.location.isValid()) {
+  while (SoftSerial.available() > 0) 
+  {
+    if (gps.encode(SoftSerial.read())) 
+    {
+      if (gps.location.isValid()) 
+      {
         Serial.print("Latitude   = ");
         Serial.println(gps.location.lat(), 6);
         Serial.print("Longitude  = ");
         Serial.println(gps.location.lng(), 6);
-      } else {
+      } 
+      else 
+      {
         Serial.println("Location Invalid");
       }
-      if (gps.satellites.isValid()) {
+      if (gps.satellites.isValid()) 
+      {
         Serial.print("Satellites = ");
         Serial.println(gps.satellites.value());
-      } else
+      } 
+      else
+      {
         Serial.println("Satellites Invalid");
+      }  
     }
   }
 
@@ -25,7 +34,8 @@ void mpuHel() {
   Serial.println(y);
   delay(10);
   // Lấy giá trị y để xác định
-if (y >= 0.70 or y <= -0.70) {
+if (y >= 0.70 or y <= -0.70) 
+{
   String url = "http://maps.google.com/maps?q=loc:";
   url = url + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
   digitalWrite(redled, 1);
@@ -35,7 +45,9 @@ if (y >= 0.70 or y <= -0.70) {
   lcd.print(url);
   lcd.clear();
   delay(500);
-} else {
+} 
+else 
+{
   digitalWrite(redled, 0);
 }
 }
