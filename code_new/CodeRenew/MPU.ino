@@ -9,19 +9,19 @@ void MPU() // Chương trình con MPU
   delay(10); 
   // Lấy giá trị góc để xác định khi ngã
   //-------------------------------------
-  GPS();// Gọi chương trình con GPS để lấy tọa độ khi ngã
-  if (y >= 0.70 or y <= -0.70) 
-  {
-  String URL = "http://maps.google.com/maps?q=loc:";
-  URL = URL + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
-  Serial.println(url);
-  Serial.println("Xe bị ngã");
-  delay(500);
-  } 
-  else 
-  {
-  Serial.println("Xe bình thường");
-  delay(500);
-  }
-
+    GPS();// Gọi chương trình con GPS để lấy tọa độ khi ngã
+      if (y >= 0.70 or y <= -0.70) 
+      {
+      String URL = "http://maps.google.com/maps?q=loc:";
+      URL = URL + String(gps.location.lat(), 6) + "," + String(gps.location.lng(), 6);
+      Serial.println(URL);
+      Serial.println("Xe bị ngã");
+      delay(500);
+      } 
+      else 
+      {
+      Serial.println("Xe bình thường");
+      delay(500);
+      }
+  //---------------------------------------
 }

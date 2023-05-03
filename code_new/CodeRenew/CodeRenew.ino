@@ -23,17 +23,6 @@ void loop()
 {
   //----------------------------------------------
   GPS();// Gọi chương trình con GPS tính tốc độ
-    if (gps.speed.kmph() > 40) 
-    {
-    Serial.println("Quá tốc độ");
-    delay(500);
-    } 
-    else
-    {
-      Serial.println("Tốc độ bình thường");
-      delay(1000);
-    }
-    // Lệnh If dùng để giới hạn tốc độ
-    //-----------------------------------------------
-  MPU();
+  //-----------------------------------------------
+  MPU();// Gọi chương trình con MPU
 }
