@@ -24,7 +24,7 @@ const byte diachi[6] = "01234";
 #include <MPU6050_tockn.h>
 MPU6050 mpu6050(Wire);
 float Y; float X;
-//--------------------------------------------------------Cấu trúc Data  ?
+//--------------------------------------------------------Cấu trúc Data
 struct package_send{ int TX_Connect; };
 package_send data_send;
 //--------------------------------------------------------Hàm Reset
@@ -51,7 +51,7 @@ void setup()
   oled.begin(&Adafruit128x64, 0x3C);
   oled.setFont(System5x7);
 
-  for(int i=15; i>0; i--){oled.setCursor(0,0); oled.print("Ready is: "); oled.print(i); oled.print("  ");delay(1000);} // cần giải thích chỗ này
+  for(int i=15; i>0; i--){oled.setCursor(0,0); oled.print("Ready is: "); oled.print(i); oled.print("  ");delay(1000);}
   
   pinMode(SOS_btn,  INPUT_PULLUP);
   pinMode(RS_Phone, INPUT_PULLUP);
@@ -60,7 +60,7 @@ void setup()
   pinMode(Buzz,     OUTPUT);
   pinMode(Light,    OUTPUT);
   
-  simSerial.begin(9600); 
+  simSerial.begin(9600);
   simSerial.println("AT+CMGF=1");   delay(500);  
   simSerial.println("AT+CNMI=2,2,0,0,0");   delay(500);
   simSerial.println("AT+CMGL=\"REC UNREAD\"");   delay(500); 
@@ -71,8 +71,7 @@ void setup()
 
   gpsSerial.begin(9600);
   
-  if (radio.begin()) 
-    { Serial.println("NRF24L01 Start!"); } 
+  if (radio.begin()) { Serial.println("NRF24L01 Start!"); } 
   radio.openWritingPipe(diachi); 
   radio.setPALevel(RF24_PA_MIN); 
   radio.setDataRate(RF24_250KBPS);            
@@ -100,14 +99,14 @@ void loop()
   Y = mpu6050.getAccY();
   X = mpu6050.getAccX();
   Serial.print(X); Serial.print(" | "); Serial.println(Y);  
-  if(digitalRead(SOS_btn)==0 || analogRead(Ancol)>1000 || X>0.70 || X>-0.90 || abs(Y)>0.70) // thay đổi góc X do góc đặt mpu trong nón hơi lệch
+  if(digitalRead(SOS_btn)==0 || analogRead(Ancol)>1000 || abs(X)>0.70 || abs(Y)>0.70)
   {
     oled.setCursor(0,0); oled.print("Send SOS!!!          "); 
     Send_SOS();
     oled.clear();
   }
 //-----------------------------------------------------------Reset ADMIN và chế độ lấy MAP
-  if(digitalRead(RS_Phone)==0) // chưa rõ chỗ này
+  if(digitalRead(RS_Phone)==0)
   {
     oled.clear();
     while(digitalRead(RS_Phone)==0) 

@@ -20,7 +20,7 @@ void Load_GPS()
         dtostrf(Lng, 9, 6, buffer2);  
         A = String(buffer1);  B = String(buffer2);
 //        Serial.print(A); Serial.print(","); Serial.println(B);
-        for (int i = 0; i < A.length(); ++i){EEPROM.write(15+i, A[i]);} 
+        for (int i = 0; i < A.length(); ++i){EEPROM.write(15+i, A[i]);} //?
         for (int i = 0; i < B.length(); ++i){EEPROM.write(24+i, B[i]);}
         timeGPS = millis();
        }
