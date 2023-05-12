@@ -2,8 +2,6 @@
  //--------------------------------------------------------OLED
 #include "SSD1306Ascii.h"
 #include "SSD1306AsciiAvrI2c.h" 
-
-
 SSD1306AsciiAvrI2c oled;
 //--------------------------------------------------------SIM - EPROM
 #include <SoftwareSerial.h>
@@ -17,6 +15,7 @@ TinyGPSPlus gps;
 //--------------------------------------------------------RF 
 #include <SPI.h>
 #include <nRF24L01.h>
+// #include <RF24_config.h>
 #include <RF24.h>
 RF24 radio(9, 10); // CE, CSN
 const byte diachi[6] = "01234"; 

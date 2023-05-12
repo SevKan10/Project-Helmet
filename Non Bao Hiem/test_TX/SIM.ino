@@ -42,7 +42,7 @@ void Send_SOS()
 { 
   simSerial.listen();
   digitalWrite(Buzz, 1);
-  simSerial.println("AT+CMGF=1"); delay(500);
+  simSerial.println("AT+CMGF=1"); delay(500);//gửi sms
   simSerial.println("AT+CMGS=\"" + ADMIN + "\"\r"); delay(500);
   simSerial.println("Help me!");
   simSerial.print("http://maps.google.com/maps?z=18&q="); 
