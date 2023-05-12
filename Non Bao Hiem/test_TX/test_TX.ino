@@ -70,8 +70,7 @@ void setup()
 
   gpsSerial.begin(9600);
   
-  if (radio.begin()) 
-    { Serial.println("NRF24L01 Start!"); } 
+  radio.begin();
   radio.openWritingPipe(diachi); 
   radio.setPALevel(RF24_PA_MIN); 
   radio.setDataRate(RF24_250KBPS);            
