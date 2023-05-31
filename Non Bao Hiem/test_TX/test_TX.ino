@@ -15,15 +15,21 @@ TinyGPSPlus gps;
 //--------------------------------------------------------RF 
 #include <SPI.h>
 #include <nRF24L01.h>
-// #include <RF24_config.h>
 #include <RF24.h>
 RF24 radio(9, 10); // CE, CSN
 const byte diachi[6] = "01234"; 
 //--------------------------------------------------------MPU
-#include <MPU6050_tockn.h>
-MPU6050 mpu6050(Wire);
-float Y; float X;
-//--------------------------------------------------------Cấu trúc Data  ?
+#include "I2Cdev.h"
+#include "MPU6050.h"
+
+#if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+    #include "Wire.h"
+#endif
+MPU6050 accelgyro;
+int16_t ax, ay, az;  int16_t gx, gy, gz;
+#define OUTPUT_READABLE_ACCELGYRO
+
+//--------------------------------------------------------Cấu trúc Data
 struct package_send{ int TX_Connect; };
 package_send data_send;
 //--------------------------------------------------------Hàm Reset
@@ -31,10 +37,12 @@ void(* resetFunc) (void) = 0;
 //--------------------------------------------------------Khởi tạo biến
 unsigned long interrupt; //Time chạy RF
 unsigned long timeGPS;   //Time lưu GPS
-String ADMIN = "0332473716";            //Số ĐT ADMIN
+unsigned long fall;      //Time tính té ngã
+unsigned long timeLight; //Time delay đèn
+String ADMIN;            //Số ĐT ADMIN
 String lt, lg;           //Tọa độ trong EPPROM
 float Lat, Lng;          //Toạ độ trực tiếp
-int flag = 5;            //Đếm ngược reset  
+int flag2;               //Đếm ngược reset  
 
 //--------------------------------------------------------Khởi tạo nút nhấn
 #define SOS_btn  4        //Nút SOS
@@ -50,7 +58,7 @@ void setup()
   oled.begin(&Adafruit128x64, 0x3C);
   oled.setFont(System5x7);
 
-  for(int i=15; i>0; i--){oled.setCursor(0,0); oled.print("Ready is: "); oled.print(i); oled.print("  ");delay(1000);} // cần giải thích chỗ này
+  for(int i=15; i>0; i--){oled.setCursor(0,0); oled.print("Ready is: "); oled.print(i); oled.print("  ");delay(1000);}
   
   pinMode(SOS_btn,  INPUT_PULLUP);
   pinMode(RS_Phone, INPUT_PULLUP);
@@ -59,53 +67,68 @@ void setup()
   pinMode(Buzz,     OUTPUT);
   pinMode(Light,    OUTPUT);
   
-  simSerial.begin(9600); 
+  simSerial.begin(9600);
   simSerial.println("AT+CMGF=1");   delay(500);  
   simSerial.println("AT+CNMI=2,2,0,0,0");   delay(500);
   simSerial.println("AT+CMGL=\"REC UNREAD\"");   delay(500); 
-//  for (int i = 0;  i < 12; ++i) { ADMIN  += char(EEPROM.read(i)); }
+
+  for (int i = 0;  i < 12; ++i) { ADMIN  += char(EEPROM.read(i)); }
   for (int i = 15; i < 23; ++i) { lt     += char(EEPROM.read(i)); }
   for (int i = 24; i < 34; ++i) { lg     += char(EEPROM.read(i)); }
   Serial.print(ADMIN); Serial.print(" | "); Serial.print(lt); Serial.print(","); Serial.println(lg); 
 
-  gpsSerial.begin(9600);
-  
-  radio.begin();
+  gpsSerial.begin(9600);          
+
+  if (ADMIN==0){
+    oled.setCursor(0,0);  oled.print(" Setting ADMIN  ");
+    while (ADMIN==0) {Setup_ADMIN();}
+  }
+
+  if (radio.begin()) { Serial.println("NRF24L01 Start!"); } 
   radio.openWritingPipe(diachi); 
   radio.setPALevel(RF24_PA_MIN); 
-  radio.setDataRate(RF24_250KBPS);            
+  radio.setDataRate(RF24_250KBPS);  
 
-//  if (ADMIN==0){
-//    oled.setCursor(0,0);  oled.print(" Setting ADMIN  ");
-//    while (ADMIN==0) {Setup_ADMIN();}
-//  }
-
-  oled.setCursor(0,0);  oled.print("Starting Angle Sensor");  delay(1000); 
-  mpu6050.begin();
-  mpu6050.calcGyroOffsets(true);
-  oled.clear();
-
+  #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+    Wire.begin();
+  #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
+    Fastwire::setup(400, true);
+  #endif
+  accelgyro.initialize();
+  
   oled.setCursor(0,0);  oled.print("Device is ready!");  delay(1000); oled.clear();
 }
 void loop() 
 {
+  int flag = 5;
   Load_GPS();
-  digitalWrite(Buzz, 0);
-  digitalWrite(Light, digitalRead(Lux));
+ if(digitalRead(Lux) == 1) { timeLight = millis(); digitalWrite(Light, 1); }
+ if(millis() - timeLight >= 3000) { digitalWrite(Light, 0); }
+
+//-----------------------------------------------------------SOS  
+  accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+  #ifdef OUTPUT_READABLE_ACCELGYRO
+    oled.setCursor(0,3);  oled.print(ax); oled.print("  |  ");   oled.print(ay);
+  #endif
   
-////-----------------------------------------------------------SOS  
-  mpu6050.update();
-  Y = mpu6050.getAccY();
-  X = mpu6050.getAccX();
-  Serial.print(X); Serial.print(" | "); Serial.println(Y);  
-  if(digitalRead(SOS_btn)==0 || analogRead(Ancol)>1000 || X>0.70 || X>-0.90 || abs(Y)>0.70) // thay đổi góc X do góc đặt mpu trong nón hơi lệch
+  if(digitalRead(SOS_btn)==0 || analogRead(Ancol)>1000)
+  {
+    oled.setCursor(0,0); oled.print("Send SOS!!!          "); 
+    Send_SOS();
+    oled.clear();
+  }
+
+  if(flag2==0){fall = millis(); }
+  if(abs(ax)>13000 || abs(ay)>14000 && flag2==0) {flag2=1; oled.setCursor(0,0); oled.print("FALL"); }
+  if(abs(ax)<13000 && abs(ay)<14000) {flag2=0; oled.setCursor(0,0); oled.print("            ");}
+  if(millis()-fall >= 3000)
   {
     oled.setCursor(0,0); oled.print("Send SOS!!!          "); 
     Send_SOS();
     oled.clear();
   }
 //-----------------------------------------------------------Reset ADMIN và chế độ lấy MAP
-  if(digitalRead(RS_Phone)==0) // chưa rõ chỗ này
+  if(digitalRead(RS_Phone)==0)
   {
     oled.clear();
     while(digitalRead(RS_Phone)==0) 
@@ -114,7 +137,7 @@ void loop()
       flag--; delay(1000);
       if(flag <= 0){ for (int i = 0; i < 12; ++i) {EEPROM.write(i, 0);} delay(500); resetFunc();} 
     }
-    if(digitalRead(RS_Phone)==1){oled.clear(); flag = 6;} 
+    if(digitalRead(RS_Phone)==1){oled.clear();} 
   }
 //-----------------------------------------------------------Load RF 
   if(millis() - interrupt >= 1000) 

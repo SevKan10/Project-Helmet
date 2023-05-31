@@ -24,6 +24,7 @@ void Setup_ADMIN()
     if(splitString(inputString,"#",1)=="ADMIN")
     {
       for(int i = 9; i < 21; i++){Val += inputString.charAt(i);}
+      Serial.print("ADMIN: "); Serial.println(Val);
       for (int i = 0; i < Val.length(); ++i){EEPROM.write(i, Val[i]);} 
       delay(500);
 
@@ -42,7 +43,7 @@ void Send_SOS()
 { 
   simSerial.listen();
   digitalWrite(Buzz, 1);
-  simSerial.println("AT+CMGF=1"); delay(500);//gửi sms
+  simSerial.println("AT+CMGF=1"); delay(500);
   simSerial.println("AT+CMGS=\"" + ADMIN + "\"\r"); delay(500);
   simSerial.println("Help me!");
   simSerial.print("http://maps.google.com/maps?z=18&q="); 
@@ -56,4 +57,6 @@ void Send_SOS()
   simSerial.print (F("ATH"));
   simSerial.print (F(";\r\n"));
   delay(500);
+  digitalWrite(Buzz, 0);
+  flag2=0; fall = millis(); 
 }
