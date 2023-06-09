@@ -15,7 +15,7 @@ void Load_GPS()
         Lng = gps.location.lng(); 
         String A, B; 
         char buffer1[15]; char buffer2[15];
-        dtostrf(Lat, 7, 6, buffer1);   dtostrf(Lng, 9, 6, buffer2);  
+        dtostrf(Lat, 7, 6, buffer1);   dtostrf(`Lng, 9, 6, buffer2);  
         A = String(buffer1);  B = String(buffer2);
  //       Serial.print(A); Serial.print(","); Serial.println(B);
         for (int i = 0; i < A.length(); ++i){EEPROM.write(15+i, A[i]);} 

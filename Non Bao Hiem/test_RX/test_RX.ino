@@ -35,9 +35,10 @@ void(* resetFunc) (void) = 0;
 //--------------------------------------------------------Khởi tạo biến
 unsigned long interrupt = 0; //Time chạy RF
 unsigned long ping = 0;      //Độ trì hoãn
-String data; String datas;
-String PW;
+String data; String datas; String sdata;
+String PW="";
 int flag1;
+int flag2;
 
 void setup() 
 {
@@ -45,7 +46,7 @@ void setup()
   lcd.init();
   lcd.backlight();
 
-  for (int i = 0;  i < 6; ++i) { PW  += char(EEPROM.read(i)); } delay(500);
+  for (int i = 0;  i < 6; ++i) { if(EEPROM.read(i)!=0) { PW  += char(EEPROM.read(i)); }} delay(500);
   Serial.println(PW);
   
   if (radio.begin()) { Serial.println("NRF24L01 Start!"); } 

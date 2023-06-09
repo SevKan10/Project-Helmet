@@ -1,6 +1,5 @@
 void NRF()
 {
-
   while(radio.available())
   {
     digitalWrite(Buzze, 0); digitalWrite(Power, 1);
@@ -8,6 +7,7 @@ void NRF()
     radio.read(&data_receive, sizeof(package_receive)); 
     ping = 0; flag1=0;
   }
+  
   while(!radio.available())
   {
     ping++; 
@@ -19,9 +19,15 @@ void NRF()
       char customKey = customKeypad.getKey();
       if (customKey && flag1==0 ){
         lcd.clear();
-        data+=customKey;
-        if(customKey=='C'){data="";}
-        lcd.setCursor(0,1); lcd.print(data);  
+        if(customKey!='A'){sdata+=customKey;}
+        if(customKey=='C'){sdata="";}
+        if(customKey=='A')
+        {
+          data = sdata; Serial.println(data);
+          if(data!=PW){flag2++; Serial.println(flag2);}
+        }
+        while(flag2>=3){ lcd.setCursor(0,0); lcd.print("Wrong password"); digitalWrite(Buzze, 1); }
+        lcd.setCursor(0,1); lcd.print(sdata);  
       }
 
       if(data==PW)
@@ -30,7 +36,7 @@ void NRF()
         while(data==PW)
         {
           char Key = customKeypad.getKey(); 
-          while(Key=='A')  { lcd.setCursor(0,1); lcd.print("Unlocked"); digitalWrite(Power, 1); }
+          while(Key=='A')  { lcd.setCursor(0,1); lcd.print("Unlocked"); digitalWrite(Power, 1); }  
           while(Key=='D')  
           { 
             lcd.setCursor(0,0); lcd.print("Reset password  ");
@@ -38,10 +44,14 @@ void NRF()
             if(pass)
             {
               lcd.clear(); 
-              datas+=pass; 
+              if(pass!='A'){datas+=pass; }
               if(pass=='C'){datas="";}
               lcd.setCursor(0,1); lcd.print(datas);
-              if(pass=='A'){for (int i = 0; i < datas.length(); ++i){EEPROM.write(i, datas[i]);} delay(500); resetFunc();}
+              if(pass=='A'){
+                for (int i = 0; i < 99; ++i){EEPROM.write(i, 0);} delay(500); 
+                for (int i = 0; i < datas.length(); ++i){EEPROM.write(i, datas[i]);} delay(500); 
+                resetFunc();
+                }
             }  
           }
         }

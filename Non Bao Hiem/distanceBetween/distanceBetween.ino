@@ -8,8 +8,8 @@ void setup() {
     // Tính khoảng cách giữa vị trí hiện tại và vị trí cần khoanh vùng
     float distance = TinyGPSPlus::distanceBetween(
       10.05636, 
-      105.78601, //chỗ của mình
-      targetLat,// cần khoanh vùng
+      105.78601, 
+      targetLat,
       targetLng
     );
 
