@@ -124,7 +124,7 @@ void loop()
   if(millis()-fall >= 3000)
   {
     oled.setCursor(0,0); oled.print("Send SOS!!!          "); 
- ]   Send_SOS();
+    Send_SOS();
     oled.clear();
   }
 //-----------------------------------------------------------Reset ADMIN và chế độ lấy MAP
