@@ -21,7 +21,7 @@ void Setup_ADMIN()
     while(simSerial.available()){inputString = simSerial.readString();}
     delay(65);
     Serial.println(inputString);
-    if(splitString(inputString,"#",1)=="ADMIN")
+    if(splitString(inputString,"*",1)=="ADMIN")
     {
       for(int i = 9; i < 21; i++){Val += inputString.charAt(i);}
       Serial.print("ADMIN: "); Serial.println(Val);
@@ -41,12 +41,12 @@ void Setup_ADMIN()
 //---------------------------------------------------------------- Gửi SOS
 void Send_SOS()
 { 
-  simSerial.listen();simSerial.listen();
+  simSerial.listen();
   digitalWrite(Buzz, 1);
   simSerial.println("AT+CMGF=1"); delay(500);
-  simSerial.println("AT+CMGS=\"" + ADMIN + "\"\r"); delay(500);
+  simSerial.println("AT+CMGS=\"" + ADMIN + "\"\r""AT+CMGS=\"" + ADMIN + "\"\r"); delay(500);
   simSerial.println("Help me!");
-  simSerial.print("http://maps.google.com/maps?z=18&q="); 
+  simSerial.print("http://maps.google.com/maps?z=18&q=http://maps.google.com/maps?z=18&q="); 
   simSerial.print(Lat, 6); simSerial.print(","); simSerial.println(Lng, 6); 
   simSerial.println((char)26); delay(5000);
 

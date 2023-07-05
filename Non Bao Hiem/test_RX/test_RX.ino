@@ -4,7 +4,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 RF24 radio(9, 10); // CE, CSN
-const byte diachi[] = "02210";  
+const byte diachi[] = "01234";  
 //--------------------------------------------------------RF
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
